@@ -61,6 +61,8 @@ ServiceWrapper
         });
 ```
 
+These two hooks that will call for each wrapper.
+
 There are six pre-defined hooks that you can set them to the `ServiceWrapper` or on each `ClientWrapper`s to affect the services.
  1. `HOOKS.BEFORE_FIRE` calls before client service calling, but this hook is not async, and the fire will not wait for this. 
  2. `HOOKS.BEFORE_RESOLVE` calls when the service client promise is resolving, and the value that it returns will send as the resolve parameter.
@@ -69,4 +71,25 @@ There are six pre-defined hooks that you can set them to the `ServiceWrapper` or
  5. `HOOKS.AFTER_FAIL` calls exactly before the reject and this is not async to.  
  6. `HOOKS.UPDATE_REQUEST_CONFIG` with this hook you can update the request config before fire.
  
+ If you active the queue on initialization, so you can specify the behavior of each service in the queue, and determine 
+ that your service should be parallel beside other services or pending. To do that you should pass options to  
+ the `fire` method and set the value of the `parallel` property as `true` or `false`. Here is an example of parallel 
+ and pending service definition.
+ 
+ ```javascript
+// this will fire immediately after adding to the queue
+new ClientWrapper({url: "https://reqres.in/api/users"})
+    .fire({parallel: true})
+    .then(res=> {
+        //...
+    })
+
+
+// this will for its turn on queue
+new ClientWrapper({url: "https://reqres.in/api/users"})
+    .fire({parallel: true})
+    .then(res=> {
+        //...
+    })
+```
 
