@@ -1,0 +1,39 @@
+{
+  "name": "collective-service-wrapper",
+  "version": "0.0.1",
+  "description": "",
+  "main": "lib/collective-service-wrapper.js",
+  "license": "MIT",
+  "author": "Behnam Azimi",
+  "homepage": "https://github.com/behnamazimi/collective-service-wrapper",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/behnamazimi/collective-service-wrapper.git"
+  },
+  "bugs": {
+    "url": "https://github.com/behnamazimi/collective-service-wrapper/issues"
+  },
+  "scripts": {
+    "test": "node test/index.js",
+    "dev": "webpack --watch",
+    "build": "webpack --mode production"
+  },
+  "keywords": [
+    "http request",
+    "request",
+    "request queue"
+  ],
+  "devDependencies": {
+    "@babel/core": "^7.9.6",
+    "@babel/plugin-transform-runtime": "^7.10.1",
+    "babel-loader": "^8.1.0",
+    "jest": "^26.0.1",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11"
+  },
+  "dependencies": {
+    "axios": "^0.19.2",
+    "superagent": "^5.2.2",
+    "supertest": "^4.0.2"
+  }
+}
