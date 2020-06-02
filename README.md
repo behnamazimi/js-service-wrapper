@@ -48,3 +48,11 @@ new ClientWrapper("https://reqres.in/api/users")
         console.log(err);
     })
 ```
+
+We have the chance to interrupt the above normal flow in different stages. We use hooks to do this. There are six pre-defined hooks that we can manipulate them to affect the services.
+ 1. `HOOKS.BEFORE_FIRE` calls before client service calling, but this hook is not async, and the fire will not wait for this. 
+ 2. `HOOKS.BEFORE_RESOLVE` calls when the service client promise is resolving, and the value that it returns will send as the resolve parameter.
+ 3. `HOOKS.BEFORE_REJECT` calls when the service client promise is rejecting, and the value that it returns will send as the reject parameter.
+ 4. `HOOKS.AFTER_SUCCESS` calls exactly before the resolve and this is not async to.  
+ 5. `HOOKS.AFTER_FAIL` calls exactly before the reject and this is not async to.  
+ 6. `HOOKS.UPDATE_REQUEST_CONFIG` with this hook we can update the request config before fire.
