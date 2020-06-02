@@ -66,7 +66,9 @@ new ClientWrapper({url: "https://reqres.in/api/users/2"})
     })
 
 
-new ClientWrapper({url: "https://reqres.in/api/users/3"})
+new ClientWrapper("https://reqres.in/api/users/3")
+    .setClient(fetch.bind(window)) 
+    .setHook(HOOKS.BEFORE_RESOLVE, res => res.json()) // get result and return the data property
     .fire({parallel: false})
     .then(res => {
         console.log("user 4 fetched");
