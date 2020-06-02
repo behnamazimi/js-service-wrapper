@@ -1,1 +1,1 @@
-# Service Queue
+# Collective Service Wrapper
