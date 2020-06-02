@@ -72,7 +72,18 @@ There are six pre-defined hooks that you can set them to the `ServiceWrapper` or
  5. `HOOKS.AFTER_FAIL` calls exactly before the reject and this is not async to.  
  6. `HOOKS.UPDATE_REQUEST_CONFIG` with this hook you can update the request config before fire.
  
- If you active the queue on initialization, so you can specify the behavior of each service in the queue, and determine 
+ Also, you can set the special `client` and `hooks` for each `ClientWrapper`:
+ ```javascript
+new ClientWrapper(clientConfig)
+    .setClient(manualClient) 
+    .setHook(HOOKS.BEFORE_RESOLVE, res => res.body) // get result and return the data property
+    .fire({parallel: true})
+    .then(res=> {
+        //...
+    })
+``` 
+ 
+ If you active the **queue** on initialization, so you can specify the behavior of each service in the queue, and determine 
  that your service should be parallel beside other services or pending. To do that you should pass options to  
  the `fire` method and set the value of the `parallel` property as `true` or `false`. Here is an example of parallel 
  and pending service definition.
@@ -105,9 +116,24 @@ ServiceWrapper
         queueLogs: true,
     })
     .setHook(HOOKS.BEFORE_RESOLVE, res => res.data)
+    .setHook(HOOKS.AFTER_SUCCESS, res => {
+        // update auth token     
+    })
+    .setHook(HOOKS.AFTER_FAIL, err => {
+        // handle status
+        if (err.response.status === 401) {
+            console.log('redirect to /401')
+
+        } else if (err.response.status === 404) {
+            console.log('redirect to /404')
+                               
+        } else if (err.response.status === 500) {
+            console.log('redirect to /500')
+        }     
+    })
 
 
-new ClientWrapper("https://reqres.in/api/users")
+new ClientWrapper({url: "https://reqres.in/api/users"})
     .fire({parallel: false})
     .then((res) => {
         console.log("users fetched");
@@ -117,7 +143,7 @@ new ClientWrapper("https://reqres.in/api/users")
     })
 
 
-new ClientWrapper("https://reqres.in/api/users/2")
+new ClientWrapper({url: "https://reqres.in/api/users/2"})
     .fire({parallel: false})
     .then(res => {
         console.log("user 3 fetched");
@@ -127,7 +153,7 @@ new ClientWrapper("https://reqres.in/api/users/2")
     })
 
 
-new ClientWrapper("https://reqres.in/api/users/3")
+new ClientWrapper({url: "https://reqres.in/api/users/3"})
     .fire({parallel: false})
     .then(res => {
         console.log("user 4 fetched");
