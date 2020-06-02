@@ -20,22 +20,23 @@ npm install collective-service-wrapper
 
 ### Getting Started
 
-First of all you need to import it in your project.
+First of all you need to import `collective-service-wrapper` in your project.
 ```javascript
 const {ServiceWrapper, ClientWrapper, HOOKS} = require("collective-service-wrapper");
 ```
 
-`ServiceWrapper` is the main object of our util. You need to initialize. it's enough to init it once in your project.
+`ServiceWrapper` is the main object of our util. You need to initialize it, and it's enough to init it once in your project.
 ```javascript
 ServiceWrapper
     .init({
-        client: axios,
+        client: axios, // this is the most important part of the init
         queue: true,
         queueLogs: true,
     })
 ```
-The client that you set on the `ServiceWrapper` will be call inside the `ClientWrapper`, and it will return a promise.
-Here is an example of wrapping. This code will call `axios` as client because you send it on `init` as the client value.
+The client that you set on the `ServiceWrapper` is the most important part of the initialization. It will be call 
+inside the `ClientWrapper`, and it will return a promise.
+Here is an example of wrapping. This code will call `axios` as client because we send it on `init` as the client value.
 ```javascript
 new ClientWrapper({url: "https://reqres.in/api/users"})
     .fire()
@@ -90,6 +91,49 @@ new ClientWrapper({url: "https://reqres.in/api/users"})
     .fire({parallel: true})
     .then(res=> {
         //...
+    })
+```
+
+## Full Example
+```javascript
+const {ServiceWrapper, ClientWrapper, HOOKS} = require("collective-service-wrapper");
+
+ServiceWrapper
+    .init({
+        client: axios,
+        queue: true,
+        queueLogs: true,
+    })
+    .setHook(HOOKS.BEFORE_RESOLVE, res => res.data)
+
+
+new ClientWrapper("https://reqres.in/api/users")
+    .fire({parallel: false})
+    .then((res) => {
+        console.log("users fetched");
+    })
+    .catch(err => {
+        console.log(err);
+    })
+
+
+new ClientWrapper("https://reqres.in/api/users/2")
+    .fire({parallel: false})
+    .then(res => {
+        console.log("user 3 fetched");
+    })
+    .catch(err => {
+        console.log(err);
+    })
+
+
+new ClientWrapper("https://reqres.in/api/users/3")
+    .fire({parallel: false})
+    .then(res => {
+        console.log("user 4 fetched");
+    })
+    .catch(err => {
+        console.log(err);
     })
 ```
 
