@@ -1,6 +1,6 @@
 "use strict";
 
-import {ServiceWrapper, HOOKS} from "./service-handler";
+import {ServiceWrapper, HOOKS} from "./service-wrapper";
 
 export class ClientWrapper {
 

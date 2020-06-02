@@ -1,2 +1,2 @@
-export * from "./service-handler"
+export * from "./service-wrapper"
 export * from "./client-wrapper"
