@@ -1,7 +1,7 @@
 {
   "name": "collective-service-wrapper",
   "version": "0.0.2",
-  "description": "",
+  "description": "Promise based collective service wrapper with queue support for browsers and NodeJS",
   "main": "lib/collective-service-wrapper.js",
   "license": "MIT",
   "author": "Behnam Azimi",
@@ -20,8 +20,10 @@
   },
   "keywords": [
     "service wrapper",
-    "http request",
-    "service function"
+    "service queue",
+    "request queue",
+    "http request wrapper",
+    "task queue"
   ],
   "devDependencies": {
     "@babel/core": "^7.9.6",
