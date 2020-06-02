@@ -51,6 +51,10 @@ export class ClientWrapper {
     fire(options = {}) {
         this._fireOptions = options;
 
+        // check the existence of the fire options
+        if (!this._fireOptions || typeof this._fireOptions !== 'object')
+            this._fireOptions = {parallel: true};
+
         // we get the config by rest from arguments and it has array type
         // so, we need to convert it to array after updating
         this._reqConfig = [this.execHook(HOOKS.UPDATE_REQUEST_CONFIG, ...this._reqConfig)];
