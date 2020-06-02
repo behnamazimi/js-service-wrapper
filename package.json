@@ -19,21 +19,17 @@
     "build": "webpack --mode production"
   },
   "keywords": [
+    "service wrapper",
     "http request",
-    "request",
-    "request queue"
+    "service function"
   ],
   "devDependencies": {
     "@babel/core": "^7.9.6",
     "@babel/plugin-transform-runtime": "^7.10.1",
     "babel-loader": "^8.1.0",
-    "jest": "^26.0.1",
     "webpack": "^4.43.0",
-    "webpack-cli": "^3.3.11"
-  },
-  "dependencies": {
+    "webpack-cli": "^3.3.11",
     "axios": "^0.19.2",
-    "superagent": "^5.2.2",
-    "supertest": "^4.0.2"
+    "superagent": "^5.2.2"
   }
 }
