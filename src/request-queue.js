@@ -34,7 +34,7 @@ export const RequestQueue = (() => {
             fire(id, ...args) {
                 if (this._requests[id] && typeof this._requests[id].listener === 'function') {
 
-                    this.log(`* FIRED: ${id} [${this._requests[id].status}]`);
+                    this.log(`* FIRED: ${id} [type: ${this._requests[id].status}]`);
 
                     this._requests[id].status = "fired"
                     this._requests[id].listener.apply(this, args);
