@@ -1,7 +1,7 @@
 const axios = require("axios").default;
 const superagent = require('superagent');
 
-const {ServiceWrapper, ClientWrapper, HOOKS} = require("../lib/collective-service-wrapper");
+const {ServiceWrapper, ClientHandler, HOOKS} = require("../lib/collective-service-wrapper");
 
 function fakeClient() {
     return new Promise(resolve => {
@@ -20,7 +20,7 @@ ServiceWrapper
     .setHook(HOOKS.BEFORE_RESOLVE, res => res.body)
 
 
-new ClientWrapper("https://reqres.in/api/users")
+new ClientHandler("https://reqres.in/api/users")
     .fire({parallel: false})
     .then((res) => {
         console.log("users fetched");
@@ -30,7 +30,7 @@ new ClientWrapper("https://reqres.in/api/users")
     })
 
 
-new ClientWrapper("https://reqres.in/api/users/2")
+new ClientHandler("https://reqres.in/api/users/2")
     .fire({parallel: false})
     .then(res => {
         console.log("user 3 fetched");
@@ -40,7 +40,7 @@ new ClientWrapper("https://reqres.in/api/users/2")
     })
 
 
-new ClientWrapper("https://reqres.in/api/users/3")
+new ClientHandler("https://reqres.in/api/users/3")
     .fire({parallel: false})
     .then(res => {
         console.log("user 4 fetched");
@@ -50,7 +50,7 @@ new ClientWrapper("https://reqres.in/api/users/3")
     })
 
 
-new ClientWrapper("https://reqres.in/api/users/4")
+new ClientHandler("https://reqres.in/api/users/4")
     .fire({parallel: false})
     .then(res => {
         console.log("user 5 fetched");
@@ -60,7 +60,7 @@ new ClientWrapper("https://reqres.in/api/users/4")
     })
 
 
-new ClientWrapper()
+new ClientHandler()
     .setClient(fakeClient)
     .setHook(HOOKS.BEFORE_RESOLVE, res => res)
     .fire({parallel: true})

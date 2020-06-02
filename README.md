@@ -22,14 +22,14 @@ npm install collective-service-wrapper
 
 First of all you need to import `collective-service-wrapper` in your project.
 ```javascript
-const {ServiceWrapper, ClientWrapper, HOOKS} = require("collective-service-wrapper");
+const {ServiceWrapper, ClientHandler, HOOKS} = require("collective-service-wrapper");
 ```
 
 `ServiceWrapper` is the main object of our util. You need to initialize it, and it's enough to init it once in your project.
 ```javascript
 ServiceWrapper
     .init({
-        // `client` is the function that call inside `ClientWrapper`
+        // `client` is the function that call inside `ClientHandler`
         client: axios, 
         
         // `queue` is for determining that your service wrapper should active queue or not 
@@ -40,10 +40,10 @@ ServiceWrapper
     })
 ```
 The client that you set on the `ServiceWrapper` is the most important part of the initialization. It will be call 
-inside the `ClientWrapper`, and it will return a promise.
+inside the `ClientHandler`, and it will return a promise.
 Here is an example of wrapping. This code will call `axios` as client because we send it on `init` as the client value.
 ```javascript
-new ClientWrapper({url: "https://reqres.in/api/users"})
+new ClientHandler({url: "https://reqres.in/api/users"})
     .fire()
     .then(res => {
         // handle result
@@ -71,7 +71,7 @@ ServiceWrapper
 These two hooks will call on all wrappers. the first one will get the result and return the `data` property of that,
  and the second one just receives the result after client-promise succeed and log it.
 
-There are six pre-defined hooks that you can set them to the `ServiceWrapper` or on each `ClientWrapper`s to affect the services.
+There are six pre-defined hooks that you can set them to the `ServiceWrapper` or on each `ClientHandler`s to affect the services.
  1. `HOOKS.BEFORE_FIRE` calls before client service calling, but this hook is not async, and the fire will not wait for this. 
  2. `HOOKS.BEFORE_RESOLVE` calls when the service client promise is resolving, and the value that it returns will send as the resolve parameter.
  3. `HOOKS.BEFORE_REJECT` calls when the service client promise is rejecting, and the value that it returns will send as the reject parameter.
@@ -79,9 +79,9 @@ There are six pre-defined hooks that you can set them to the `ServiceWrapper` or
  5. `HOOKS.AFTER_FAIL` calls exactly before the reject and this is not async to.  
  6. `HOOKS.UPDATE_REQUEST_CONFIG` with this hook you can update the request config before fire.
  
- Also, you can set the special `client` and `hooks` for each `ClientWrapper`:
+ Also, you can set the special `client` and `hooks` for each `ClientHandler`:
  ```javascript
-new ClientWrapper(clientConfig)
+new ClientHandler(clientConfig)
     .setClient(manualClient) 
     .setHook(HOOKS.BEFORE_RESOLVE, res => res.body) // get result and return the data property
     .fire({parallel: true})
@@ -97,7 +97,7 @@ new ClientWrapper(clientConfig)
  
  ```javascript
 // this will fire immediately after adding to the queue
-new ClientWrapper({url: "https://reqres.in/api/users"})
+new ClientHandler({url: "https://reqres.in/api/users"})
     .fire({parallel: true})
     .then(res=> {
         //...
@@ -105,7 +105,7 @@ new ClientWrapper({url: "https://reqres.in/api/users"})
 
 
 // this will for its turn on queue
-new ClientWrapper({url: "https://reqres.in/api/users"})
+new ClientHandler({url: "https://reqres.in/api/users"})
     .fire({parallel: true})
     .then(res=> {
         //...
@@ -115,7 +115,7 @@ new ClientWrapper({url: "https://reqres.in/api/users"})
 
 ## Full Example
 ```javascript
-const {ServiceWrapper, ClientWrapper, HOOKS} = require("collective-service-wrapper");
+const {ServiceWrapper, ClientHandler, HOOKS} = require("collective-service-wrapper");
 
 ServiceWrapper
     .init({
@@ -141,7 +141,7 @@ ServiceWrapper
     })
 
 
-new ClientWrapper({url: "https://reqres.in/api/users"})
+new ClientHandler({url: "https://reqres.in/api/users"})
     .fire({parallel: false})
     .then((res) => {
         console.log("all users fetched");
@@ -151,7 +151,7 @@ new ClientWrapper({url: "https://reqres.in/api/users"})
     })
 
 
-new ClientWrapper({url: "https://reqres.in/api/users/2"})
+new ClientHandler({url: "https://reqres.in/api/users/2"})
     .fire({parallel: false})
     .then(res => {
         console.log("user 2 fetched");
@@ -161,7 +161,7 @@ new ClientWrapper({url: "https://reqres.in/api/users/2"})
     })
 
 
-new ClientWrapper("https://reqres.in/api/users/3")
+new ClientHandler("https://reqres.in/api/users/3")
     .setClient(fetch.bind(window)) 
     .setHook(HOOKS.BEFORE_RESOLVE, res => res.json()) // get result and return the data property
     .fire({parallel: true})
