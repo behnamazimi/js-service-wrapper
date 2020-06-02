@@ -18,66 +18,6 @@ Using yarn:
 npm install collective-service-wrapper
 ```
 
-## Full Example
-```javascript
-const {ServiceWrapper, ClientWrapper, HOOKS} = require("collective-service-wrapper");
-
-ServiceWrapper
-    .init({
-        client: axios,
-        queue: true,
-        queueLogs: true,
-    })
-    .setHook(HOOKS.BEFORE_RESOLVE, res => res.data)
-    .setHook(HOOKS.AFTER_SUCCESS, res => {
-        // update auth token     
-    })
-    .setHook(HOOKS.AFTER_FAIL, err => {
-        // handle status
-        if (err.response.status === 401) {
-            console.log('redirect to /401')
-
-        } else if (err.response.status === 404) {
-            console.log('redirect to /404')
-                               
-        } else if (err.response.status === 500) {
-            console.log('redirect to /500')
-        }     
-    })
-
-
-new ClientWrapper({url: "https://reqres.in/api/users"})
-    .fire({parallel: false})
-    .then((res) => {
-        console.log("users fetched");
-    })
-    .catch(err => {
-        console.log(err);
-    })
-
-
-new ClientWrapper({url: "https://reqres.in/api/users/2"})
-    .fire({parallel: false})
-    .then(res => {
-        console.log("user 3 fetched");
-    })
-    .catch(err => {
-        console.log(err);
-    })
-
-
-new ClientWrapper("https://reqres.in/api/users/3")
-    .setClient(fetch.bind(window)) 
-    .setHook(HOOKS.BEFORE_RESOLVE, res => res.json()) // get result and return the data property
-    .fire({parallel: false})
-    .then(res => {
-        console.log("user 4 fetched");
-    })
-    .catch(err => {
-        console.log(err);
-    })
-```
-
 ## Getting Started
 
 First of all you need to import `collective-service-wrapper` in your project.
@@ -171,6 +111,93 @@ new ClientWrapper({url: "https://reqres.in/api/users"})
         //...
     })
 ```
+
+
+## Full Example
+```javascript
+const {ServiceWrapper, ClientWrapper, HOOKS} = require("collective-service-wrapper");
+
+ServiceWrapper
+    .init({
+        client: axios,
+        queue: true,
+        queueLogs: true,
+    })
+    .setHook(HOOKS.BEFORE_RESOLVE, res => res.data)
+    .setHook(HOOKS.AFTER_SUCCESS, res => {
+        // update auth token     
+    })
+    .setHook(HOOKS.AFTER_FAIL, err => {
+        // handle status
+        if (err.response.status === 401) {
+            console.log('redirect to /401')
+
+        } else if (err.response.status === 404) {
+            console.log('redirect to /404')
+                               
+        } else if (err.response.status === 500) {
+            console.log('redirect to /500')
+        }     
+    })
+
+
+new ClientWrapper({url: "https://reqres.in/api/users"})
+    .fire({parallel: false})
+    .then((res) => {
+        console.log("all users fetched");
+    })
+    .catch(err => {
+        console.log(err);
+    })
+
+
+new ClientWrapper({url: "https://reqres.in/api/users/2"})
+    .fire({parallel: false})
+    .then(res => {
+        console.log("user 2 fetched");
+    })
+    .catch(err => {
+        console.log(err);
+    })
+
+
+new ClientWrapper("https://reqres.in/api/users/3")
+    .setClient(fetch.bind(window)) 
+    .setHook(HOOKS.BEFORE_RESOLVE, res => res.json()) // get result and return the data property
+    .fire({parallel: true})
+    .then(res => {
+        console.log("user 3 fetched ==> this service was parallel");
+    })
+    .catch(err => {
+        console.log(err);
+    })
+```
+
+this will be the console result of the above example:
+```bash
++ ADDED: 1__glmag
+* FIRED: 1__glmag [type: pending]
++ ADDED: 2__bgvrg
++ ADDED: 3__8jlr8
+* FIRED: 3__8jlr8 [type: parallel]
+- REMOVED: 1__glmag
+* FIRED: 2__bgvrg [type: pending]
+users fetched
+- REMOVED: 3__8jlr8
+user 3 fetched ==> this service was parallel
+- REMOVED: 2__bgvrg
+user 2 fetched
+
+```
+There are three wrapped services. Each of them has its unique id in the queue but ID starts with the real position index
+ in the queue. As you can see above, all services added to the queue on its turn. When the first service added,
+  it fires because it’s first of the queue too.
+  
+The second service will add to the queue after the first one, but it’s not parallel, so it must wait until it turns.
+After the second, the third one, the only parallel service should add to the queue. It fires immediately when added to the queue because it’s parallel.
+When all added, the first one resolves and removes from the queue, and the second service that is pending should fires.
+Each of the services will remove from the queue after done. 
+
 
 ### Tips
  * To use the `fetch` as your client function, you need to send the bound version of it as like `fetch.bind(window)`.
