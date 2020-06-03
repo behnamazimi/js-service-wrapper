@@ -1,10 +1,15 @@
 # Collective Service Wrapper
 
-Sometimes you need to pass your service functions throw a shared pipe and call some actions on all of them. Or maybe you want to add all of your services to a queue that supports parallel and pending tasks. 
+Sometimes you need to pass your service functions from a shared pipe and call some actions on all of them.
+ Or maybe you want to add all of your services to a queue that supports parallel and pending tasks.
 
-Needs that I mentioned above are common especially when you are using an http-request client like [**axios**](https://github.com/axios/axios), [**fetch**](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API), or [**superagent**](https://github.com/visionmedia/superagent). Lots of the fetching could fire in the same time and if you want to check a common situation for all of them it could be very frustrating.
+Needs that I mentioned above are common especially when you are using an http-request client like 
+[**axios**](https://github.com/axios/axios), [**fetch**](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API), 
+or [**superagent**](https://github.com/visionmedia/superagent). Lots of the fetching could fire in the same time and 
+if you want to check a common situation for all of them it could be very frustrating.
 
-In these conditions, you can use **Collective Service Wrapper**. A promise based service wrapper with queue support that works on browsers and NodeJS environment.
+In these conditions, you can use **Collective Service Wrapper**. A promise based service wrapper with queue support 
+that works on browsers and NodeJS environment.
 
 ## Install
 
