@@ -23,11 +23,18 @@ Using yarn:
 npm install collective-service-wrapper
 ```
 
+Using unpkg CDN
+```
+<script src="http://unpkg.com/collective-service-wrapper/lib/collective-service-wrapper.js"></script>
+```
+
 ## Getting Started
 
 First of all you need to import `collective-service-wrapper` in your project.
 ```javascript
 const {ServiceWrapper, ClientHandler, HOOKS} = require("collective-service-wrapper");
+
+import {ServiceWrapper, ClientHandler, HOOKS} from "collective-service-wrapper";
 ```
 
 `ServiceWrapper` is the main object of our util. You need to initialize it, and it's enough to init it once in your project.
