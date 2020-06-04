@@ -1,4 +1,4 @@
-# Collective Service Wrapper
+# JS Service Wrapper
 
 Sometimes you need to pass your service functions from a shared pipe and call some actions on all of them.
  Or maybe you want to add all of your services to a queue that supports parallel and pending tasks.
@@ -8,7 +8,7 @@ Needs that I mentioned above are common especially when you are using an http-re
 or [**superagent**](https://github.com/visionmedia/superagent). Lots of the fetching could fire in the same time and 
 if you want to check a common situation for all of them it could be very frustrating.
 
-In these conditions, you can use **Collective Service Wrapper**. A promise based service wrapper with queue support 
+In these conditions, you can use **JS Service Wrapper**. A promise based collective service wrapper with queue support 
 that works on browsers and NodeJS environment.
 
 ## Getting Started
