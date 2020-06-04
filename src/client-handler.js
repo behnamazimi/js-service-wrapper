@@ -98,6 +98,9 @@ export class ClientHandler {
                     resolve(this.execHook(HOOKS.BEFORE_RESOLVE, callRes, this._fireOptions));
 
                 } else {
+
+                    this.execHook(HOOKS.AFTER_FAIL, e, this._fireOptions)
+
                     reject(this.execHook(HOOKS.BEFORE_REJECT, callRes, this._fireOptions));
                 }
 
