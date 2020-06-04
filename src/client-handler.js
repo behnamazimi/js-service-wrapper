@@ -2,7 +2,7 @@
 
 import {ServiceWrapper, HOOKS} from "./service-wrapper";
 
-export class ClientHandler {
+export default class ClientHandler {
 
     constructor(...conf) {
         this._client = ServiceWrapper.client;
