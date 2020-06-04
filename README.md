@@ -27,7 +27,7 @@ npm install js-service-wrapper
 
 Using unpkg CDN
 ```
-<script src="http://unpkg.com/js-service-wrapper/lib/js-service-wrapper.js"></script>
+<script src="http://unpkg.com/js-service-wrapper/lib/js-service-wrapper.min.js"></script>
 ```
 
 ### Usage
