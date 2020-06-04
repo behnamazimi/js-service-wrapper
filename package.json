@@ -1,6 +1,6 @@
 {
   "name": "collective-service-wrapper",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Promise based collective service wrapper with queue support for browsers and NodeJS",
   "main": "lib/collective-service-wrapper.js",
   "license": "MIT",
