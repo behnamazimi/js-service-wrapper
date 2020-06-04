@@ -11,7 +11,9 @@ if you want to check a common situation for all of them it could be very frustra
 In these conditions, you can use **Collective Service Wrapper**. A promise based service wrapper with queue support 
 that works on browsers and NodeJS environment.
 
-## Install
+## Getting Started
+
+### Installation
 
 Using npm:
 ```
@@ -28,12 +30,13 @@ Using unpkg CDN
 <script src="http://unpkg.com/collective-service-wrapper/lib/collective-service-wrapper.js"></script>
 ```
 
-## Getting Started
+### Usage
 
 First of all you need to import `collective-service-wrapper` in your project.
 ```javascript
 const {ServiceWrapper, ClientHandler, HOOKS} = require("collective-service-wrapper");
 
+// or
 import {ServiceWrapper, ClientHandler, HOOKS} from "collective-service-wrapper";
 ```
 
@@ -66,6 +69,8 @@ new ClientHandler({url: "https://reqres.in/api/users"})
         console.log(err);
     })
 ```
+
+### Hooks
 
 We have the chance to interrupt the above normal flow in different stages. We use hooks to do this.
 Let's set some hooks to the service wrapper.
@@ -102,6 +107,8 @@ new ClientHandler(clientConfig)
     })
 ``` 
  
+ ### Queue
+ 
  If you active the **queue** on initialization, so you can specify the behavior of each service in the queue, and determine 
  that your service should be parallel beside other services or pending. To do that you should pass options to  
  the `fire` method and set the value of the `parallel` property as `true` or `false`. Here is an example of parallel 
@@ -123,7 +130,6 @@ new ClientHandler({url: "https://reqres.in/api/users"})
         //...
     })
 ```
-
 
 ## Full Example
 ```javascript
@@ -174,7 +180,7 @@ new ClientHandler({url: "https://reqres.in/api/users/2"})
 
 
 new ClientHandler("https://reqres.in/api/users/3")
-    .setClient(fetch.bind(window)) 
+    .setClient(fetch.bind(window))  // fetch works only on browser
     .setHook(HOOKS.BEFORE_RESOLVE, res => res.json()) // get result and return the data property
     .fire({parallel: true})
     .then(res => {
@@ -206,7 +212,8 @@ There are three wrapped services. Each of them has its unique id in the queue bu
   it fires because it’s first of the queue too.
   
 The second service will add to the queue after the first one, but it’s not parallel, so it must wait until it turns.
-After the second, the third one, the only parallel service should add to the queue. It fires immediately when added to the queue because it’s parallel.
+After the second, the third one, the only parallel service should add to the queue. It fires immediately when added to 
+the queue because it’s parallel.
 When all added, the first one resolves and removes from the queue, and the second service that is pending should fires.
 Each of the services will remove from the queue after done. 
 
