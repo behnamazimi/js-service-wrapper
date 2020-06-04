@@ -36,7 +36,7 @@ First of all you need to import `js-service-wrapper` in your project.
 ```javascript
 const {ServiceWrapper, ClientHandler, HOOKS} = require("js-service-wrapper");
 
-// or
+// ES Module
 import {ServiceWrapper, ClientHandler, HOOKS} from "js-service-wrapper";
 ```
 
@@ -45,21 +45,35 @@ import {ServiceWrapper, ClientHandler, HOOKS} from "js-service-wrapper";
 ServiceWrapper
     .init({
         // `client` is the function that call inside `ClientHandler`
+        // default value is null
         client: axios, 
         
         // `queue` is for determining that your service wrapper should active queue or not 
+        // the queue is disabled by default
         queue: true,
     
         // if this will be true, queue will log details in different stages 
+        // default value is false
         queueLogs: true,
+        
+        // set the default parallel value of fireOptions 
+        // default value is true
+        defaultParallelStatus: true,
     })
+    .setResolveValidation(res => res.status === "ok");
 ```
+
 The client that you set on the `ServiceWrapper` is the most important part of the initialization. It will be call 
-inside the `ClientHandler` and will return a promise.
+inside the `ClientHandler` and will return a promise. Also, you can do a validation on the promise result by define 
+a promise response validation method, `setResolveValidation`. It will execute after promise done and check if the 
+result is exactly what you want or not. If the resolve validation return false, so the service will reject. 
+
+The default value of `resolveValidation` is a function that returns `true`.
+
 Here is an example of wrapping. This code calls `axios` as client because we set it as the `client` value on `init`.
 ```javascript
 new ClientHandler({url: "https://reqres.in/api/users"})
-    .fire()
+    .fire({parallel: false})
     .then(res => {
         // handle result
         console.log("users fetched");
@@ -69,6 +83,9 @@ new ClientHandler({url: "https://reqres.in/api/users"})
         console.log(err);
     })
 ```
+
+You can send an object as fire-options to the `fire` method. the most important property on it is the `parallel`. 
+If you not send the parallel status to the `fire`, handler will take it from `defaultParallelStatus` which you send on the `init`.
 
 ### Hooks
 
