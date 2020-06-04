@@ -17,27 +17,27 @@ that works on browsers and NodeJS environment.
 
 Using npm:
 ```
-npm install collective-service-wrapper
+npm install js-service-wrapper
 ```
 
 Using yarn:
 ```
-npm install collective-service-wrapper
+npm install js-service-wrapper
 ```
 
 Using unpkg CDN
 ```
-<script src="http://unpkg.com/collective-service-wrapper/lib/collective-service-wrapper.js"></script>
+<script src="http://unpkg.com/js-service-wrapper/lib/js-service-wrapper.js"></script>
 ```
 
 ### Usage
 
-First of all you need to import `collective-service-wrapper` in your project.
+First of all you need to import `js-service-wrapper` in your project.
 ```javascript
-const {ServiceWrapper, ClientHandler, HOOKS} = require("collective-service-wrapper");
+const {ServiceWrapper, ClientHandler, HOOKS} = require("js-service-wrapper");
 
 // or
-import {ServiceWrapper, ClientHandler, HOOKS} from "collective-service-wrapper";
+import {ServiceWrapper, ClientHandler, HOOKS} from "js-service-wrapper";
 ```
 
 `ServiceWrapper` is the main object of our util. You need to initialize it, and it's enough to init it once in your project.
@@ -138,7 +138,7 @@ new ClientHandler({url: "https://reqres.in/api/users"})
 
 ## Full Example
 ```javascript
-const {ServiceWrapper, ClientHandler, HOOKS} = require("collective-service-wrapper");
+const {ServiceWrapper, ClientHandler, HOOKS} = require("js-service-wrapper");
 
 ServiceWrapper
     .init({
@@ -240,4 +240,4 @@ I would be grateful to those who helped me make the project truly perfect. So, f
 
 ### License
 
-[MIT](https://github.com/behnamazimi/collective-service-wrapper/blob/master/LICENSE)
+[MIT](https://github.com/behnamazimi/js-service-wrapper/blob/master/LICENSE)

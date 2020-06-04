@@ -1,17 +1,17 @@
 {
-  "name": "collective-service-wrapper",
+  "name": "js-service-wrapper",
   "version": "1.0.0",
   "description": "Promise based collective service wrapper with queue support for browsers and NodeJS",
-  "main": "lib/collective-service-wrapper.js",
+  "main": "lib/js-service-wrapper.js",
   "license": "MIT",
   "author": "Behnam Azimi",
-  "homepage": "https://github.com/behnamazimi/collective-service-wrapper",
+  "homepage": "https://github.com/behnamazimi/js-service-wrapper",
   "repository": {
     "type": "git",
-    "url": "https://github.com/behnamazimi/collective-service-wrapper.git"
+    "url": "https://github.com/behnamazimi/js-service-wrapper.git"
   },
   "bugs": {
-    "url": "https://github.com/behnamazimi/collective-service-wrapper/issues"
+    "url": "https://github.com/behnamazimi/js-service-wrapper/issues"
   },
   "scripts": {
     "test": "node test/index.js",

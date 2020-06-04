@@ -3,11 +3,10 @@ const path = require('path')
 module.exports = {
     mode: 'production',
     entry: './src/index.js',
-    target: "web",
     output: {
-        filename: 'collective-service-wrapper.js',
+        filename: 'js-service-wrapper.js',
         path: path.resolve(__dirname, 'lib'),
-        library: 'collectiveServiceWrapper',
+        library: 'JSServiceWrapper',
         publicPath: '/lib/',
         libraryTarget: 'umd',
         umdNamedDefine: true,

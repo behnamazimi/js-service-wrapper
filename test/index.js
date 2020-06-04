@@ -1,7 +1,7 @@
 const axios = require("axios").default;
 const superagent = require('superagent');
 
-const {ServiceWrapper, ClientHandler, HOOKS} = require("../lib/collective-service-wrapper");
+const {ServiceWrapper, ClientHandler, HOOKS} = require("../lib/js-service-wrapper");
 
 function fakeClient() {
     return new Promise(resolve => {
