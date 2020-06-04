@@ -51,9 +51,9 @@ const ServiceWrapperObject = {
 
         return this._hooks[hookName].apply(null, args)
     },
-    resolveValidation(...args) {
+    resolveValidation(result) {
         if (this._resolveValidation && typeof this._resolveValidation === "function") {
-            return this._resolveValidation.apply(null, args)
+            return this._resolveValidation(result)
         }
 
         return false;

@@ -38,23 +38,25 @@ export class ClientHandler {
     execHook(hookName, ...args) {
         if (this._customHooks[hookName]
             && typeof this._customHooks[hookName] === "function") {
-            return this._customHooks[hookName].apply(null, args)
+            return this._customHooks[hookName].apply(this, args)
         }
 
         return ServiceWrapper.execHook(hookName, ...args)
     }
 
-    resolveValidation(...args) {
+    resolveValidation(result) {
         if (this._resolveValidation
             && typeof this._resolveValidation === "function") {
-            return this._resolveValidation.apply(null, args)
+            return this._resolveValidation(result)
         }
 
-        return ServiceWrapper.resolveValidation(args);
+        return ServiceWrapper.resolveValidation(result);
     }
 
     setResolveValidation(fn) {
         this._resolveValidation = fn;
+
+        return this
     }
 
     /**
@@ -68,7 +70,7 @@ export class ClientHandler {
 
         // check the existence of the fire options
         if (!this._fireOptions || typeof this._fireOptions !== 'object')
-            this._fireOptions = {parallel: true};
+            this._fireOptions = {parallel: ServiceWrapper.defaultParallelStatus};
 
         // we get the config by rest from arguments and it has array type
         // so, we need to convert it to array after updating
