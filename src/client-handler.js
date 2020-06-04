@@ -16,6 +16,8 @@ export class ClientHandler {
         this._id = ServiceWrapper.addToQueue();
 
         this._customHooks = {};
+
+        this._resolveValidation = null;
     }
 
     setClient(client) {
@@ -40,6 +42,19 @@ export class ClientHandler {
         }
 
         return ServiceWrapper.execHook(hookName, ...args)
+    }
+
+    resolveValidation(...args) {
+        if (this._resolveValidation
+            && typeof this._resolveValidation === "function") {
+            return this._resolveValidation.apply(null, args)
+        }
+
+        return ServiceWrapper.resolveValidation(args);
+    }
+
+    setResolveValidation(fn) {
+        this._resolveValidation = fn;
     }
 
     /**
@@ -75,16 +90,19 @@ export class ClientHandler {
                 const callRes = await this._client(...this._reqConfig);
 
                 // check the status of request and ErrorCode existence
-                if (callRes.status === 200) {
+                if (this.resolveValidation(callRes)) {
 
                     this.execHook(HOOKS.AFTER_SUCCESS, callRes, this._fireOptions)
 
                     // resolve the main result
                     resolve(this.execHook(HOOKS.BEFORE_RESOLVE, callRes, this._fireOptions));
+
+                } else {
+                    reject(this.execHook(HOOKS.BEFORE_REJECT, callRes, this._fireOptions));
                 }
 
             } catch (e) { // this scope will call when status is not 200
-                console.log(e);
+
                 this.execHook(HOOKS.AFTER_FAIL, e, this._fireOptions)
 
                 reject(this.execHook(HOOKS.BEFORE_REJECT, e, this._fireOptions));

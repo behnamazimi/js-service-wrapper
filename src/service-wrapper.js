@@ -17,6 +17,7 @@ const ServiceWrapperObject = {
     _hooks: {},
     client: null,
     queue: null,
+    _resolveValidation: null,
     setClient(client) {
         this.client = client;
     },
@@ -49,6 +50,16 @@ const ServiceWrapperObject = {
 
         return this._hooks[hookName].apply(null, args)
     },
+    resolveValidation(...args) {
+        if (this._resolveValidation && typeof this._resolveValidation === "function") {
+            return this._resolveValidation.apply(null, args)
+        }
+
+        return false;
+    },
+    setResolveValidation(fn) {
+        this._resolveValidation = fn;
+    },
     init(options = {}) {
         if (!options || options.toString() !== "[object Object]") {
             throw new Error("Invalid options passed.")
@@ -71,6 +82,7 @@ const ServiceWrapperObject = {
 export const ServiceWrapper = {__proto__: ServiceWrapperObject};
 
 (function initRequestHandler() {
+    ServiceWrapper.setResolveValidation(res => !!res);
     ServiceWrapper.setHook(HOOKS.BEFORE_RESOLVE, data => data);
     ServiceWrapper.setHook(HOOKS.BEFORE_RESOLVE, data => data);
     ServiceWrapper.setHook(HOOKS.UPDATE_REQUEST_CONFIG, data => data);
