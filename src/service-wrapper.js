@@ -88,7 +88,7 @@ const ServiceWrapperObject = {
 export const ServiceWrapper = {__proto__: ServiceWrapperObject};
 
 (function initRequestHandler() {
-    ServiceWrapper.setResolveValidation(res => !!res);
+    ServiceWrapper.setResolveValidation(res => true);
     ServiceWrapper.setHook(HOOKS.BEFORE_RESOLVE, data => data);
     ServiceWrapper.setHook(HOOKS.BEFORE_REJECT, data => data);
     ServiceWrapper.setHook(HOOKS.UPDATE_REQUEST_CONFIG, data => data);
