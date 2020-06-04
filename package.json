@@ -2,7 +2,9 @@
   "name": "js-service-wrapper",
   "version": "1.0.2",
   "description": "Promise based collective service wrapper with queue support for browsers and NodeJS",
-  "main": "lib/js-service-wrapper.js",
+  "main": "lib/js-service-wrapper.cjs.js",
+  "module": "lib/js-service-wrapper.esm.js",
+  "browser": "lib/js-service-wrapper.min.js",
   "license": "MIT",
   "author": "Behnam Azimi",
   "homepage": "https://github.com/behnamazimi/js-service-wrapper",
@@ -15,8 +17,8 @@
   },
   "scripts": {
     "test": "node test/index.js",
-    "dev": "webpack --watch",
-    "build": "webpack --mode production"
+    "dev": "rollup -c -w",
+    "build": "rollup -c"
   },
   "keywords": [
     "service wrapper",
@@ -28,10 +30,14 @@
   "devDependencies": {
     "@babel/core": "^7.9.6",
     "@babel/plugin-transform-runtime": "^7.10.1",
-    "babel-loader": "^8.1.0",
-    "webpack": "^4.43.0",
-    "webpack-cli": "^3.3.11",
     "axios": "^0.19.2",
-    "superagent": "^5.2.2"
+    "babel-loader": "^8.1.0",
+    "rollup": "^2.13.1",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-terser": "^6.1.0",
+    "superagent": "^5.2.2",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11"
   }
 }
