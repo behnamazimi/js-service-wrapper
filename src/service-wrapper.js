@@ -40,6 +40,8 @@ const ServiceWrapperObject = {
     },
     setHook(hookName, fn) {
         this._hooks[hookName] = fn;
+
+        return this;
     },
     execHook(hookName, ...args) {
         if (!this._hooks[hookName])
