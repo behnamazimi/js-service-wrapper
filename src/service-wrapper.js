@@ -18,6 +18,7 @@ const ServiceWrapperObject = {
     client: null,
     queue: null,
     _resolveValidation: null,
+    defaultParallelStatus: true,
     setClient(client) {
         this.client = client;
     },
@@ -59,6 +60,8 @@ const ServiceWrapperObject = {
     },
     setResolveValidation(fn) {
         this._resolveValidation = fn;
+
+        return this;
     },
     init(options = {}) {
         if (!options || options.toString() !== "[object Object]") {
@@ -74,6 +77,9 @@ const ServiceWrapperObject = {
         } else {
             this.queue = null;
         }
+
+        if (options.defaultParallelStatus !== void 0)
+            this.defaultParallelStatus = Boolean(options.defaultParallelStatus);
 
         return this
     }
