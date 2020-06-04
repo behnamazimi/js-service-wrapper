@@ -1,6 +1,6 @@
 {
   "name": "js-service-wrapper",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Promise based collective service wrapper with queue support for browsers and NodeJS",
   "main": "lib/js-service-wrapper.cjs.js",
   "module": "lib/js-service-wrapper.esm.js",
