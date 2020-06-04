@@ -55,8 +55,8 @@ ServiceWrapper
     })
 ```
 The client that you set on the `ServiceWrapper` is the most important part of the initialization. It will be call 
-inside the `ClientHandler`, and it will return a promise.
-Here is an example of wrapping. This code will call `axios` as client because we send it on `init` as the client value.
+inside the `ClientHandler` and will return a promise.
+Here is an example of wrapping. This code calls `axios` as client because we set it as the `client` value on `init`.
 ```javascript
 new ClientHandler({url: "https://reqres.in/api/users"})
     .fire()
@@ -72,7 +72,10 @@ new ClientHandler({url: "https://reqres.in/api/users"})
 
 ### Hooks
 
-We have the chance to interrupt the above normal flow in different stages. We use hooks to do this.
+We have the chance to intervene in the above trend at different stages by **hooks**. 
+Hooks are some functions that execute in places we defined, you can think of hooks as events triggered at 
+special points. Each hook has a name (event type) and a function that executes (listener). 
+
 Let's set some hooks to the service wrapper.
 
 ```javascript
@@ -85,18 +88,19 @@ ServiceWrapper
         });
 ```
 
-These two hooks will call on all wrappers. the first one will get the result and return the `data` property of that,
- and the second one just receives the result after client-promise succeed and log it.
+The hooks that you set on the `ServiceWrapper` will execute on all services. In the above example, the first one will get 
+the result and return the `data` property of it, and the second one just receives the result after client execution succeed and log it.
 
 There are six pre-defined hooks that you can set them to the `ServiceWrapper` or on each `ClientHandler`s to affect the services.
- 1. `HOOKS.BEFORE_FIRE` calls before client service calling. This hook is not async, and the fire will not wait for this. 
+ 1. `HOOKS.BEFORE_FIRE` calls before the client service calling. This hook is not async, and the fire will not wait for this. 
  2. `HOOKS.BEFORE_RESOLVE` calls when the service client promise is resolving. The value that it returns will send as the resolve parameter.
  3. `HOOKS.BEFORE_REJECT` calls when the service client promise is rejecting. The value that it returns will send as the reject parameter.
  4. `HOOKS.AFTER_SUCCESS` calls exactly before the resolve and this is not async to.  
  5. `HOOKS.AFTER_FAIL` calls exactly before the reject and this is not async to.  
  6. `HOOKS.UPDATE_REQUEST_CONFIG` with this hook you can update the request config before fire.
  
- Also, you can set the special `client` and `hooks` for each `ClientHandler`:
+ Each `ClientHandler` could have its special hook set, and its hooks will override the global hooks that have set on the `ServiceWrapper`.
+ Also, you can set the special `client` for each `ClientHandler`. Here is an example.
  ```javascript
 new ClientHandler(clientConfig)
     .setClient(manualClient) 
@@ -111,8 +115,9 @@ new ClientHandler(clientConfig)
  
  If you active the **queue** on initialization, so you can specify the behavior of each service in the queue, and determine 
  that your service should be parallel beside other services or pending. To do that you should pass options to  
- the `fire` method and set the value of the `parallel` property as `true` or `false`. Here is an example of parallel 
- and pending service definition.
+ the `fire` method and set the value of the `parallel` property as `true` or `false`. The parallel service will fire 
+ immediately after adding to the queue, but the pending service waits for its queue. Here is an example of a parallel 
+ and a pending service definition.
  
  ```javascript
 // this will fire immediately after adding to the queue
@@ -142,8 +147,9 @@ ServiceWrapper
         queueLogs: true,
     })
     .setHook(HOOKS.BEFORE_RESOLVE, res => res.data)
-    .setHook(HOOKS.AFTER_SUCCESS, res => {
+    .setHook(HOOKS.AFTER_SUCCESS, (res, fireOptions) => {
         // update auth token     
+        console.log(`=== after success ===>> ${fireOptions.fireDesc}`)
     })
     .setHook(HOOKS.AFTER_FAIL, err => {
         // handle status
@@ -160,7 +166,7 @@ ServiceWrapper
 
 
 new ClientHandler({url: "https://reqres.in/api/users"})
-    .fire({parallel: false})
+    .fire({parallel: false, fireDesc: "users fetch"})
     .then((res) => {
         console.log("all users fetched");
     })
@@ -170,7 +176,7 @@ new ClientHandler({url: "https://reqres.in/api/users"})
 
 
 new ClientHandler({url: "https://reqres.in/api/users/2"})
-    .fire({parallel: false})
+    .fire({parallel: false, fireDesc: "user 2 fetch"})
     .then(res => {
         console.log("user 2 fetched");
     })
@@ -182,7 +188,7 @@ new ClientHandler({url: "https://reqres.in/api/users/2"})
 new ClientHandler("https://reqres.in/api/users/3")
     .setClient(fetch.bind(window))  // fetch works only on browser
     .setHook(HOOKS.BEFORE_RESOLVE, res => res.json()) // get result and return the data property
-    .fire({parallel: true})
+    .fire({parallel: true, fireDesc: "user 3 fetch"})
     .then(res => {
         console.log("user 3 fetched ==> this service was parallel");
     })
@@ -191,32 +197,38 @@ new ClientHandler("https://reqres.in/api/users/3")
     })
 ```
 
-this will be the console result of the above example:
+This is the console result of the above example:
 ```bash
 + ADDED: 1__glmag
 * FIRED: 1__glmag [type: pending]
 + ADDED: 2__bgvrg
 + ADDED: 3__8jlr8
 * FIRED: 3__8jlr8 [type: parallel]
+=== after success ===>>  users fetch
 - REMOVED: 1__glmag
 * FIRED: 2__bgvrg [type: pending]
 users fetched
+=== after success ===>>  user 3 fetch
 - REMOVED: 3__8jlr8
 user 3 fetched ==> this service was parallel
+=== after success ===>>  user 2 fetch
 - REMOVED: 2__bgvrg
 user 2 fetched
 
 ```
-There are three wrapped services. Each of them has its unique id in the queue but ID starts with the real position index
+There are three wrapped services, and each has its unique id in the queue but ID starts with the real position index
  in the queue. As you can see above, all services added to the queue on its turn. When the first service added,
   it fires because it’s first of the queue too.
   
 The second service will add to the queue after the first one, but it’s not parallel, so it must wait until it turns.
 After the second, the third one, the only parallel service should add to the queue. It fires immediately when added to 
 the queue because it’s parallel.
-When all added, the first one resolves and removes from the queue, and the second service that is pending should fires.
+When all added, the first one resolves and removes from the queue, and the second service that is pending should fire.
 Each of the services will remove from the queue after done. 
 
+Also, there are three of `=== after success ===` in the result, since we set the `AFTER_SUCCESS` hook on the `ServiceWrapper`, 
+it executed for all three services. As you can see, all you send as `fireOptions` to the `fire` method is 
+ accessible in hooks as second parameter. 
 
 ### Tips
  * To use the `fetch` as your client function, you need to send the bound version of it as like `fetch.bind(window)`.
