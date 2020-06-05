@@ -1,4 +1,5 @@
 # JS Service Wrapper
+A promise based collective service wrapper with queue support which totally works in browser and/or Node.js environment
 
 Sometimes you need to pass your service functions from a shared pipe and call some actions on all of them.
  Or maybe you want to add all of your services to a queue that supports parallel and pending tasks.
@@ -6,10 +7,8 @@ Sometimes you need to pass your service functions from a shared pipe and call so
 Needs that I mentioned above are common especially when you are using an http-request client like 
 [**axios**](https://github.com/axios/axios), [**fetch**](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API), 
 or [**superagent**](https://github.com/visionmedia/superagent). Lots of the fetching could fire in the same time and 
-if you want to check a common situation for all of them it could be very frustrating.
-
-In these conditions, you can use **JS Service Wrapper**. A promise based collective service wrapper with queue support 
-that works on browsers and NodeJS environment.
+if you want to check a common situation for all of them it could be very frustrating. In these conditions,
+ you can use **JS Service Wrapper**. 
 
 ## Getting Started
 
