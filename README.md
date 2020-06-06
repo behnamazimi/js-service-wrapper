@@ -59,6 +59,9 @@ ServiceWrapper
         // default value is true
         defaultParallelStatus: true,
     })
+    // a function that execute to validate the result of main promise
+    // if the result of this function be false, the promise will reject
+    // default is a function that always returns true
     .setResolveValidation(res => res.status === "ok");
 ```
 
@@ -69,7 +72,7 @@ result is exactly what you want or not. If the resolve validation return false, 
 
 The default value of `resolveValidation` is a function that returns `true`.
 
-Here is an example of wrapping. This code calls `axios` as client because we set it as the `client` value on `init`.
+Here is an example of wrapping that calls `axios` as client because we set it as the `client` on `init`.
 ```javascript
 new ClientHandler({url: "https://reqres.in/api/users"})
     .fire({parallel: false})
