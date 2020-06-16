@@ -22,11 +22,11 @@ const ServiceWrapperObject = {
     setClient(client) {
         this.client = client;
     },
-    addToQueue() {
+    addToQueue(customID) {
         if (!this.queue)
             return;
 
-        return this.queue.add();
+        return this.queue.add(customID);
     },
     checkQueueStatus(...args) {
         if (!this.queue)

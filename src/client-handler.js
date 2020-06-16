@@ -12,9 +12,6 @@ export default class ClientHandler {
 
         this._reqConfig = conf;
 
-        // add request to service queue and get the unique id
-        this._id = ServiceWrapper.addToQueue();
-
         this._customHooks = {};
 
         this._resolveValidation = null;
@@ -22,6 +19,11 @@ export default class ClientHandler {
 
     get id() {
         return this._id;
+    }
+
+    addToQueue(customID) {
+        // add request to service queue and get the unique id
+        this._id = ServiceWrapper.addToQueue(customID);
     }
 
     cancel() {
@@ -84,12 +86,13 @@ export default class ClientHandler {
         if (!this._fireOptions || typeof this._fireOptions !== 'object')
             this._fireOptions = {parallel: ServiceWrapper.defaultParallelStatus};
 
+        // add request to queue
+        // this is important because this assigns id too
+        this.addToQueue(this._fireOptions.id);
+
         // we get the config by rest from arguments and it has array type
         // so, we need to convert it to array after updating
         this._reqConfig = [this.execHook(HOOKS.UPDATE_REQUEST_CONFIG, ...this._reqConfig)];
-
-        // TODO: set specific id for each service
-        // if (this._fireOptions && this._fireOptions.uniqueID)
 
         return new Promise(async (resolve, reject) => {
             try {

@@ -40,13 +40,16 @@ export const RequestQueue = (() => {
                     this._requests[id].listener.apply(this, args);
                 }
             },
-            add(details = {}) {
-                const newID = this.generateNewID();
-                this._requests[newID] = details;
+            add(customID) {
+                let id = customID;
+                if (!id)
+                    id = this.generateNewID();
 
-                this.log(`+ ADDED: ${newID}`)
+                this._requests[id] = {};
 
-                return newID;
+                this.log(`+ ADDED: ${id}`)
+
+                return id;
             },
             checkIdleStatus(id, parallel = false) {
                 return new Promise(resolve => {
