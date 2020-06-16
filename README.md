@@ -149,7 +149,7 @@ new ClientHandler({url: "https://reqres.in/api/users"})
 
 // this will wait for its turn on queue
 new ClientHandler({url: "https://reqres.in/api/users"})
-    .fire({parallel: true})
+    .fire({parallel: false})
     .then(res=> {
         //...
     })
