@@ -130,7 +130,7 @@ new ClientHandler(clientConfig)
     })
 ``` 
  
- ### Queue
+### Queue
  
  If you active the **queue** on initialization, so you can specify the behavior of each service in the queue, and determine 
  that your service should be parallel beside other services or pending. To do that you should pass options to  
