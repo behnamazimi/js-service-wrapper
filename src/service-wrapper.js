@@ -40,6 +40,12 @@ const ServiceWrapperObject = {
 
         return this.queue.removeRequest(reqID);
     },
+    cancelService(reqID) {
+        if (!this.queue)
+            return;
+
+        return this.queue.cancelService(reqID);
+    },
     setHook(hookName, fn) {
         this._hooks[hookName] = fn;
 

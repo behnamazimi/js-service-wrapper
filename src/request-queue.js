@@ -87,6 +87,14 @@ export const RequestQueue = (() => {
                 }
 
                 return true
+            },
+            cancelService(id) {
+                if (this._requests[id].status === "pending") {
+                    delete this._requests[id];
+                    return true;
+                }
+
+                return false
             }
         }
     }

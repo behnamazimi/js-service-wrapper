@@ -155,9 +155,44 @@ new ClientHandler({url: "https://reqres.in/api/users"})
     })
 ```
 
+#### Cancel Fired Service
+You can cancel the **pending** services of the queue. To do this, you need to put your wrapper instance in a variable before `fire`, 
+and call the `cancel` method of it when you want, like this.
+
+```javascript
+const cancelableClient = new ClientHandler()
+    .setClient(fakeClient)
+    .setHook(HOOKS.BEFORE_RESOLVE, res => res)
+
+cancelableClient
+    .fire({parallel: false, id: "CANCELABLE_USER_FETCH"})
+    .then((res) => {
+        console.log("CANCELABLE_USER_FETCH done");
+    })
+    .catch(err => {
+        console.log(err);
+    })
+
+cancelableClient.cancel()
+``` 
+
+Also, you can ask the `ServiceWrapper` to cancel your service and remove it from the queue by its `cancelService` method. 
+
+```javascript
+ServiceWrapper.cancelService(serviceID);
+```
+
 ## Full Example
 ```javascript
 const {ServiceWrapper, ClientHandler, HOOKS} = require("js-service-wrapper");
+
+function fakeClient() {
+    return new Promise(resolve => {
+        setTimeout(() => {
+            resolve({data: {a: 1, b: 2}, status: 200});
+        }, 1000)
+    })
+}
 
 ServiceWrapper
     .init({
@@ -167,8 +202,8 @@ ServiceWrapper
     })
     .setHook(HOOKS.BEFORE_RESOLVE, res => res.data)
     .setHook(HOOKS.AFTER_SUCCESS, (res, fireOptions) => {
-        // update auth token     
-        console.log(`=== after success ===>> ${fireOptions.fireDesc}`)
+        // update auth token
+        console.log(`\n=== after success ===>> ${fireOptions.id}`)
     })
     .setHook(HOOKS.AFTER_FAIL, err => {
         // handle status
@@ -177,27 +212,41 @@ ServiceWrapper
 
         } else if (err.response.status === 404) {
             console.log('redirect to /404')
-                               
+
         } else if (err.response.status === 500) {
             console.log('redirect to /500')
-        }     
+        }
     })
 
 
-new ClientHandler({url: "https://reqres.in/api/users"})
-    .fire({parallel: false, fireDesc: "users fetch"})
+new ClientHandler("https://reqres.in/api/users")
+    .fire({parallel: false, id: "ALL_USERS_FETCH"})
     .then((res) => {
-        console.log("all users fetched");
+        console.log("ALL_USERS_FETCH done");
     })
     .catch(err => {
         console.log(err);
     })
 
 
-new ClientHandler({url: "https://reqres.in/api/users/2"})
-    .fire({parallel: false, fireDesc: "user 2 fetch"})
+new ClientHandler("https://reqres.in/api/users/2")
+    .fire({parallel: false, id: "USER_2_FETCH"})
     .then(res => {
-        console.log("user 2 fetched");
+        console.log("USER_2_FETCH done");
+    })
+    .catch(err => {
+        console.log(err);
+    })
+
+
+const cancelableService = new ClientHandler()
+    .setClient(fakeClient)
+    .setHook(HOOKS.BEFORE_RESOLVE, res => res)
+
+cancelableService
+    .fire({parallel: false, id: "CANCELABLE_USER_FETCH"})
+    .then((res) => {
+        console.log("CANCELABLE_USER_FETCH done");
     })
     .catch(err => {
         console.log(err);
@@ -205,49 +254,64 @@ new ClientHandler({url: "https://reqres.in/api/users/2"})
 
 
 new ClientHandler("https://reqres.in/api/users/3")
-    .setClient(fetch.bind(window))  // fetch works only on browser
-    .setHook(HOOKS.BEFORE_RESOLVE, res => res.json()) // get result and return the data property
-    .fire({parallel: true, fireDesc: "user 3 fetch"})
-    .then(res => {
-        console.log("user 3 fetched ==> this service was parallel");
+    .setClient(superagent)
+    .setHook(HOOKS.BEFORE_RESOLVE, res => res.body)
+    .fire({parallel: false, id: "USER_3_FETCH"})
+    .then((res) => {
+        console.log("USER_3_FETCH done");
     })
     .catch(err => {
         console.log(err);
     })
+
+new ClientHandler("https://reqres.in/api/users/4")
+    .setClient(superagent)
+    .setHook(HOOKS.BEFORE_RESOLVE, res => res.body)
+    .fire({parallel: false, id: "USER_4_FETCH"})
+    .then((res) => {
+        console.log("USER_4_FETCH done");
+    })
+    .catch(err => {
+        console.log(err);
+    })
+
+
+// try to cancel client
+if (cancelableService.cancel()) {
+    console.log(`*** Service ${cancelableService.id} canceled before fire ***`)
+}
+
+if (ServiceWrapper.cancelService("USER_3_FETCH")) {
+    console.log(`*** Service USER_3_FETCH canceled before fire ***`)
+}
 ```
 
 This is the console result of the above example:
 ```bash
-+ ADDED: 1__glmag
-* FIRED: 1__glmag [type: pending]
-+ ADDED: 2__bgvrg
-+ ADDED: 3__8jlr8
-* FIRED: 3__8jlr8 [type: parallel]
-=== after success ===>>  users fetch
-- REMOVED: 1__glmag
-* FIRED: 2__bgvrg [type: pending]
-users fetched
-=== after success ===>>  user 3 fetch
-- REMOVED: 3__8jlr8
-user 3 fetched ==> this service was parallel
-=== after success ===>>  user 2 fetch
-- REMOVED: 2__bgvrg
-user 2 fetched
++ ADDED: ALL_USERS_FETCH
+* FIRED: ALL_USERS_FETCH [type: pending]
++ ADDED: USER_2_FETCH
++ ADDED: CANCELABLE_USER_FETCH
++ ADDED: USER_3_FETCH
++ ADDED: USER_4_FETCH
+- REMOVED: CANCELABLE_USER_FETCH
+*** Service CANCELABLE_USER_FETCH canceled before fire ***
+*** Service USER_3_FETCH canceled before fire ***
 
+=== after success ===>> ALL_USERS_FETCH
+- REMOVED: ALL_USERS_FETCH
+* FIRED: USER_2_FETCH [type: pending]
+ALL_USERS_FETCH done
+
+=== after success ===>> USER_2_FETCH
+- REMOVED: USER_2_FETCH
+* FIRED: USER_4_FETCH [type: pending]
+USER_2_FETCH done
+
+=== after success ===>> USER_4_FETCH
+- REMOVED: USER_4_FETCH
+USER_4_FETCH done
 ```
-There are three wrapped services, and each has its unique id in the queue but ID starts with the real position index
- in the queue. As you can see above, all services added to the queue on its turn. When the first service added,
-  it fires because it’s first of the queue too.
-  
-The second service will add to the queue after the first one, but it’s not parallel, so it must wait until it turns.
-After the second, the third one, the only parallel service should add to the queue. It fires immediately when added to 
-the queue because it’s parallel.
-When all added, the first one resolves and removes from the queue, and the second service that is pending should fire.
-Each of the services will remove from the queue after done. 
-
-Also, there are three of `=== after success ===` in the result, since we set the `AFTER_SUCCESS` hook on the `ServiceWrapper`, 
-it executed for all three services. As you can see, all you send as `fireOptions` to the `fire` method is 
- accessible in hooks as second parameter. 
 
 ### Tips
  * To use the `fetch` as your client function, you need to send the bound version of it as like `fetch.bind(window)`.
