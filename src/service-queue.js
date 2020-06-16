@@ -1,15 +1,15 @@
 "use strict";
 
 /**
- * A queue structure to control the priority of requests
+ * A queue structure to control the priority of services
  * this is a complement function for ServiceWrapper.
  *
- * RequestQueue can only have one instance because it has the singleton structure
+ * ServiceQueue can only have one instance because it has the singleton structure
  *
  * @type {Object}
  */
 
-export const RequestQueue = (() => {
+export const ServiceQueue = (() => {
     let instance;
 
     function generateInstance() {
@@ -22,22 +22,22 @@ export const RequestQueue = (() => {
             set debugMode(st) {
                 this._debugMode = st
             },
-            count: 0, // count of all requests that pushed in queue
-            _requests: {},
+            count: 0, // count of all services that pushed in queue
+            _services: {},
             generateNewID() {
                 this.count++;
                 return this.count + "__" + Math.random().toString(32).substr(2).substr(6)
             },
             onTurn(id, listener) {
-                this._requests[id] = {...this._requests[id], listener, status: "pending"}
+                this._services[id] = {...this._services[id], listener, status: "pending"}
             },
             fire(id, ...args) {
-                if (this._requests[id] && typeof this._requests[id].listener === 'function') {
+                if (this._services[id] && typeof this._services[id].listener === 'function') {
 
-                    this.log(`* FIRED: ${id} [type: ${this._requests[id].status}]`);
+                    this.log(`* FIRED: ${id} [type: ${this._services[id].status}]`);
 
-                    this._requests[id].status = "fired"
-                    this._requests[id].listener.apply(this, args);
+                    this._services[id].status = "fired"
+                    this._services[id].listener.apply(this, args);
                 }
             },
             add(customID) {
@@ -45,7 +45,7 @@ export const RequestQueue = (() => {
                 if (!id)
                     id = this.generateNewID();
 
-                this._requests[id] = {};
+                this._services[id] = {};
 
                 this.log(`+ ADDED: ${id}`)
 
@@ -60,37 +60,37 @@ export const RequestQueue = (() => {
 
                     // check if parallel is true
                     if (parallel) {
-                        this._requests[id].status = "parallel"
+                        this._services[id].status = "parallel"
                         this.fire(id)
                         return;
                     }
 
-                    // check the length of request queue or
-                    // if the request is same as current or
-                    const requestsIDs = Object.keys(this._requests);
-                    if (!requestsIDs.length || requestsIDs[0] === id) {
+                    // check the length of service queue or
+                    // if the service is same as current or
+                    const servicesIDs = Object.keys(this._services);
+                    if (!servicesIDs.length || servicesIDs[0] === id) {
                         this.fire(id)
                     }
 
                 })
             },
-            removeRequest(id) {
-                // delete request that has been done
-                delete this._requests[id];
+            removeService(id) {
+                // delete service that has been done
+                delete this._services[id];
 
                 this.log(`- REMOVED: ${id}`)
 
-                const requestsIDs = Object.keys(this._requests);
-                const first = this._requests[requestsIDs[0]];
+                const servicesIDs = Object.keys(this._services);
+                const first = this._services[servicesIDs[0]];
                 if (first && first.status === "pending") {
-                    this.fire(requestsIDs[0]);
+                    this.fire(servicesIDs[0]);
                 }
 
                 return true
             },
             cancelService(id) {
-                if (this._requests[id].status === "pending") {
-                    delete this._requests[id];
+                if (this._services[id].status === "pending") {
+                    delete this._services[id];
                     return true;
                 }
 
@@ -99,7 +99,7 @@ export const RequestQueue = (() => {
         }
     }
 
-    // return an instance of RequestQueue
+    // return an instance of ServiceQueue
     return {
         getInstance() {
             if (!instance)
@@ -110,4 +110,4 @@ export const RequestQueue = (() => {
     }
 })();
 
-export default RequestQueue
+export default ServiceQueue

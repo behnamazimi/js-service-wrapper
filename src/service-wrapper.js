@@ -1,7 +1,7 @@
 "use strict";
 
-// list of request URLs that can fetch in parallel by other requests
-import RequestQueue from "./request-queue";
+// list of service URLs that can fetch in parallel by other services
+import ServiceQueue from "./service-queue";
 
 export const HOOKS = {
     BEFORE_RESOLVE: "before.resolve",
@@ -9,7 +9,7 @@ export const HOOKS = {
     BEFORE_FIRE: "before.fire",
     AFTER_SUCCESS: "after.success",
     AFTER_FAIL: "after.fail",
-    UPDATE_REQUEST_CONFIG: "update.request-config",
+    UPDATE_SERVICE_CONFIG: "update.service-config",
 }
 
 const ServiceWrapperObject = {
@@ -34,11 +34,11 @@ const ServiceWrapperObject = {
 
         return this.queue.checkIdleStatus(...args);
     },
-    removeQueueRequest(reqID) {
+    removeServiceFromQueue(reqID) {
         if (!this.queue)
             return;
 
-        return this.queue.removeRequest(reqID);
+        return this.queue.removeService(reqID);
     },
     cancelService(reqID) {
         if (!this.queue)
@@ -78,7 +78,7 @@ const ServiceWrapperObject = {
             this.setClient(options.client)
 
         if (options.queue) {
-            this.queue = RequestQueue.getInstance()
+            this.queue = ServiceQueue.getInstance()
             this.queue.debugMode = !!options.queueLogs
         } else {
             this.queue = null;
@@ -93,9 +93,9 @@ const ServiceWrapperObject = {
 
 export const ServiceWrapper = {__proto__: ServiceWrapperObject};
 
-(function initRequestHandler() {
+(function initServiceHandler() {
     ServiceWrapper.setResolveValidation(res => true);
     ServiceWrapper.setHook(HOOKS.BEFORE_RESOLVE, data => data);
     ServiceWrapper.setHook(HOOKS.BEFORE_REJECT, data => data);
-    ServiceWrapper.setHook(HOOKS.UPDATE_REQUEST_CONFIG, data => data);
+    ServiceWrapper.setHook(HOOKS.UPDATE_SERVICE_CONFIG, data => data);
 })();

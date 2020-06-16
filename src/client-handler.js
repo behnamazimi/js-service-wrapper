@@ -22,7 +22,7 @@ export default class ClientHandler {
     }
 
     addToQueue(customID) {
-        // add request to service queue and get the unique id
+        // add service to queue and get the unique id
         this._id = ServiceWrapper.addToQueue(customID);
     }
 
@@ -31,7 +31,7 @@ export default class ClientHandler {
             return false;
 
         // remove service from queue
-        return ServiceWrapper.removeQueueRequest(this._id);
+        return ServiceWrapper.removeServiceFromQueue(this._id);
     }
 
     setClient(client) {
@@ -74,7 +74,7 @@ export default class ClientHandler {
     }
 
     /**
-     * Fire the client request and fetch response
+     * Fire the client service and fetch response
      *
      * @param options - fire options
      * @returns {Promise<>}
@@ -86,27 +86,27 @@ export default class ClientHandler {
         if (!this._fireOptions || typeof this._fireOptions !== 'object')
             this._fireOptions = {parallel: ServiceWrapper.defaultParallelStatus};
 
-        // add request to queue
+        // add service to queue
         // this is important because this assigns id too
         this.addToQueue(this._fireOptions.id);
 
         // we get the config by rest from arguments and it has array type
         // so, we need to convert it to array after updating
-        this._reqConfig = [this.execHook(HOOKS.UPDATE_REQUEST_CONFIG, ...this._reqConfig)];
+        this._reqConfig = [this.execHook(HOOKS.UPDATE_SERVICE_CONFIG, ...this._reqConfig)];
 
         return new Promise(async (resolve, reject) => {
             try {
 
                 // check idle status of service handler
-                // if isParallel is true, the request will not wait for the queue
+                // if isParallel is true, the service will not wait for the queue
                 await ServiceWrapper.checkQueueStatus(this._id, this._fireOptions.parallel);
 
                 this.execHook(HOOKS.BEFORE_FIRE, this._fireOptions);
 
-                // call Http client function and fire the request
+                // call Http client function and fire the service
                 const callRes = await this._client(...this._reqConfig);
 
-                // check the status of request and ErrorCode existence
+                // check the status of service and ErrorCode existence
                 if (this.resolveValidation(callRes)) {
 
                     this.execHook(HOOKS.AFTER_SUCCESS, callRes, this._fireOptions)
@@ -129,8 +129,8 @@ export default class ClientHandler {
 
             } finally {
 
-                // update request status in requests queue
-                ServiceWrapper.removeQueueRequest(this._id);
+                // update service status in services queue
+                ServiceWrapper.removeServiceFromQueue(this._id);
             }
         })
     }

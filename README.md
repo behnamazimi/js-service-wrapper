@@ -116,7 +116,7 @@ There are six pre-defined hooks that you can set them to the `ServiceWrapper` or
  3. `HOOKS.BEFORE_REJECT` calls when the service client promise is rejecting. The value that it returns will send as the reject parameter.
  4. `HOOKS.AFTER_SUCCESS` calls exactly before the resolve and this is not async to.  
  5. `HOOKS.AFTER_FAIL` calls exactly before the reject and this is not async to.  
- 6. `HOOKS.UPDATE_REQUEST_CONFIG` with this hook you can update the request config before fire.
+ 6. `HOOKS.UPDATE_SERVICE_CONFIG` with this hook you can update the service config before fire.
  
  Each `ClientHandler` could have its special hook set, and its hooks will override the global hooks that have set on the `ServiceWrapper`.
  Also, you can set the special `client` for each `ClientHandler`. Here is an example.
