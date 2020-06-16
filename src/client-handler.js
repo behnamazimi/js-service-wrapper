@@ -20,6 +20,18 @@ export default class ClientHandler {
         this._resolveValidation = null;
     }
 
+    get id() {
+        return this._id;
+    }
+
+    cancel() {
+        if (!this._fireOptions || this._fireOptions.parallel)
+            return false;
+
+        // remove service from queue
+        return ServiceWrapper.removeQueueRequest(this._id);
+    }
+
     setClient(client) {
         if (!client || typeof client !== "function")
             throw new Error("Invalid client passed. Client must be a function")

@@ -83,6 +83,7 @@ export const RequestQueue = (() => {
                     this.fire(requestsIDs[0]);
                 }
 
+                return true
             }
         }
     }
