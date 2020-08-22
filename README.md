@@ -21,13 +21,13 @@ npm install js-service-wrapper
 
 Using yarn:
 ```
-npm install js-service-wrapper
+yarn add js-service-wrapper
 ```
 
 Using unpkg CDN
 ```
 <script src="http://unpkg.com/js-service-wrapper/lib/js-service-wrapper.min.js"></script>
-```
+```****
 
 ### Usage
 
