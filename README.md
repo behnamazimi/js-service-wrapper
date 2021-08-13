@@ -8,7 +8,7 @@ Needs that I mentioned above are common especially when you are using an http-re
 [**axios**](https://github.com/axios/axios), [**fetch**](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API), 
 or [**superagent**](https://github.com/visionmedia/superagent). Lots of the fetching could fire in the same time and 
 if you want to check a common situation for all of them it could be very frustrating. In these conditions,
- you can use **JS Service Wrapper**. 
+ you can use **JS Service Wrapper**.
 
 ## Getting Started
 
